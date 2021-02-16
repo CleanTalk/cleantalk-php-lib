@@ -8,11 +8,16 @@ class ServerTest extends \PHPUnit\Framework\TestCase
 
     public function setUp()
     {
-        $this->original_values['REQUEST_METHOD']  = $_SERVER['REQUEST_METHOD'];
-        $this->original_values['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
-        $this->original_values['HTTP_REFERER']    = $_SERVER['HTTP_REFERER'];
-        $this->original_values['SERVER_NAME']     = $_SERVER['SERVER_NAME'];
-        $this->original_values['REQUEST_URI']     = $_SERVER['REQUEST_URI'];
+        if( isset($_SERVER['REQUEST_METHOD']) )
+            $this->original_values['REQUEST_METHOD'] = $_SERVER['REQUEST_METHOD'];
+        if( isset($_SERVER['HTTP_USER_AGENT']) )
+            $this->original_values['HTTP_USER_AGENT'] = $_SERVER['HTTP_USER_AGENT'];
+        if( isset($_SERVER['HTTP_REFERER']) )
+            $this->original_values['HTTP_REFERER']    = $_SERVER['HTTP_REFERER'];
+        if( isset($_SERVER['SERVER_NAME']) )
+            $this->original_values['SERVER_NAME']     = $_SERVER['SERVER_NAME'];
+        if( isset($_SERVER['REQUEST_URI']) )
+            $this->original_values['REQUEST_URI']     = $_SERVER['REQUEST_URI'];
 
         $_SERVER['REQUEST_METHOD'] = 'POST';
         $_SERVER['HTTP_USER_AGENT'] = 'user_agent';
@@ -56,10 +61,31 @@ class ServerTest extends \PHPUnit\Framework\TestCase
 
     protected function tearDown()
     {
-        $_SERVER['REQUEST_METHOD'] = $this->original_values['REQUEST_METHOD'];
-        $_SERVER['HTTP_USER_AGENT'] = $this->original_values['HTTP_USER_AGENT'];
-        $_SERVER['HTTP_REFERER'] = $this->original_values['HTTP_REFERER'];
-        $_SERVER['SERVER_NAME'] = $this->original_values['SERVER_NAME'];
-        $_SERVER['REQUEST_URI'] = $this->original_values['REQUEST_URI'];
+        $original_values = $this->original_values;
+        if( isset( $original_values['REQUEST_METHOD'] ) ) {
+            $_SERVER['REQUEST_METHOD'] = $original_values['REQUEST_METHOD'];
+        } else {
+            unset( $_SERVER['REQUEST_METHOD'] );
+        }
+        if( isset( $original_values['HTTP_USER_AGENT'] ) ) {
+            $_SERVER['HTTP_USER_AGENT'] = $original_values['HTTP_USER_AGENT'];
+        } else {
+            unset( $_SERVER['HTTP_USER_AGENT'] );
+        }
+        if( isset( $original_values['HTTP_REFERER'] ) ) {
+            $_SERVER['HTTP_REFERER'] = $original_values['HTTP_REFERER'];
+        } else {
+            unset( $_SERVER['HTTP_REFERER'] );
+        }
+        if( isset( $original_values['SERVER_NAME'] ) ) {
+            $_SERVER['SERVER_NAME'] = $original_values['SERVER_NAME'];
+        } else {
+            unset( $_SERVER['SERVER_NAME'] );
+        }
+        if( isset( $original_values['REQUEST_URI'] ) ) {
+            $_SERVER['REQUEST_URI'] = $original_values['REQUEST_URI'];
+        } else {
+            unset( $_SERVER['REQUEST_URI'] );
+        }
     }
 }
