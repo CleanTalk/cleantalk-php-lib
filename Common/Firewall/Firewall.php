@@ -13,20 +13,40 @@ namespace Cleantalk\Common\Firewall;
  * @see           https://github.com/CleanTalk/php-antispam
  */
 
+use Cleantalk\Common\DB;
 use Cleantalk\Common\Helper;
 use Cleantalk\Common\Variables\Get;
+use Cleantalk\Common\Variables\Server;
 
 class Firewall
 {
-	
+
+    /**
+     * @var array
+     */
 	private $ip_array = array();
-	
-	// Database
+
+    /**
+     * @var DB
+     */
 	private $db;
-	
-	//Debug
+
+    /**
+     * @var Helper
+     */
+	private $helper;
+
+    /**
+     * @var bool
+     */
 	private $debug;
-	
+
+    /**
+     * Hard-coded available FW result statuses.
+     * This order using for the results prioritizing too.
+     *
+     * @var array
+     */
 	private $statuses_priority = array(
 		// Lowest
 		'PASS_SFW',
@@ -41,51 +61,84 @@ class Firewall
 		'PASS_SFW__BY_WHITELIST',
 		// Highest
 	);
-	
+
+    /**
+     * Array of FW modules objects (FirewallModule)
+     *
+     * @var array
+     */
 	private $fw_modules = array();
 
+    /**
+     * Array of FW modules names (strings)
+     *
+     * @var array
+     */
 	private $module_names = array();
-	
+
+    /**
+     * Set FW success checked cookies for 20 min.
+     * For emergency usage only.
+     *
+     * @return bool
+     */
+    public static function temporarySkip()
+    {
+        global $apbct, $spbc;
+        if( ! empty( $_GET['access'] ) ){
+            $apbct_key = ! empty( $apbct->api_key ) ? $apbct->api_key : false;
+            $spbc_key  = ! empty( $spbc->api_key )  ? $spbc->api_key  : false;
+            if( ( $apbct_key !== false && $_GET['access'] === $apbct_key ) || ( $spbc_key !== false && $_GET['access'] === $spbc_key ) ){
+                Helper::apbct_cookie__set('spbc_firewall_pass_key', md5(Server::get( 'REMOTE_ADDR' ) . $spbc_key),       time()+1200, '/', '');
+                Helper::apbct_cookie__set('ct_sfw_pass_key',        md5(Server::get( 'REMOTE_ADDR' ) . $apbct_key), time()+1200, '/', null);
+                return true;
+            }
+        }
+        return false;
+    }
+
 	/**
 	 * Creates Database driver instance.
 	 *
 	 * @param $db
 	 */
-	public function __construct( $db )
+	public function __construct( DB $db )
 	{
 		$this->db       = $db;
-		$this->debug    = !! Get::get( 'debug' );
-		$this->ip_array = $this->ip__get( array('real'), true );
+		$this->debug    = (bool) Get::get('debug');
+		$this->ip_array = $this->ipGet( 'real', true );
+		$this->helper   = new Helper();
 	}
-	
-	/**
-	 * Getting arrays of IP (REMOTE_ADDR, X-Forwarded-For, X-Real-Ip, Cf_Connecting_Ip)
-	 *
-	 * @param array $ips_input type of IP you want to receive
-	 * @param bool  $v4_only
-	 *
-	 * @return array
-	 */
-	public function ip__get( $ips_input = array( 'real', 'remote_addr', 'x_forwarded_for', 'x_real_ip', 'cloud_flare' ), $v4_only = true )
-	{
-		$result = Helper::ip__get( $ips_input, $v4_only );
-		return ! empty( $result ) ? array( 'real' => $result ) : array();
-	}
-	
+
+    /**
+     * Setting the specific extended Helper class
+     *
+     * @param Helper $helper
+     */
+    public function setSpecificHelper(Helper $helper )
+    {
+        $this->helper = $helper;
+    }
+
 	/**
 	 * Loads the FireWall module to the array.
-	 * For inner usage only.
 	 * Not returns anything, the result is private storage of the modules.
 	 *
-	 * @param \Cleantalk\Common\Firewall\FirewallModule $module
+	 * @param FirewallModule $module
 	 */
-	public function load_fw_module( \Cleantalk\Common\Firewall\FirewallModule $module )
+	public function loadFwModule( FirewallModule $module )
 	{
 		if( ! in_array( $module, $this->fw_modules ) ) {
+
+		    // Store the Module Obj
+            $this->fw_modules[ $module->module_name ] = $module;
+
+            // Configure the Module Obj
 			$module->setDb( $this->db );
-			$module->ip__append_additional( $this->ip_array );
-			$this->fw_modules[ $module->module_name ] = $module;
-			$module->setIpArray( $this->ip_array );
+			$module->setHelper( $this->helper );
+            $module->setIpArray( $this->ip_array );
+			$module->ipAppendAdditional( $this->ip_array );
+
 		}
 	}
 	
@@ -112,7 +165,7 @@ class Firewall
 				$results[$module->module_name] = $module_results;
 			}
 
-			if( $this->is_whitelisted( $results ) ) {
+			if( $this->isWhitelisted( $results ) ) {
 				// Break protection logic if it whitelisted or trusted network.
 				break;
 			}
@@ -140,18 +193,32 @@ class Firewall
 			if( strpos( $result['status'], $module_name ) ){
 				// Blocked
 				if( strpos( $result['status'], 'DENY' ) !== false ){
-					$this->fw_modules[ $module_name ]->actions_for_denied( $result );
+					$this->fw_modules[ $module_name ]->actionsForDenied( $result );
 					$this->fw_modules[ $module_name ]->_die( $result );
 					
 				// Allowed
 				}else{
-					$this->fw_modules[ $module_name ]->actions_for_passed( $result );
+					$this->fw_modules[ $module_name ]->actionsForPassed( $result );
 				}
 			}
 			
 		}
 		
 	}
+
+    /**
+     * Getting arrays of IP (REMOTE_ADDR, X-Forwarded-For, X-Real-Ip, Cf_Connecting_Ip)
+     *
+     * @param string $ips_input type of IP you want to receive
+     * @param bool  $v4_only
+     *
+     * @return array
+     */
+    private function ipGet( $ips_input, $v4_only = true )
+    {
+        $result = Helper::ip__get( $ips_input, $v4_only );
+        return ! empty( $result ) ? array( 'real' => $result ) : array();
+    }
 	
 	/**
 	 * Sets priorities for firewall results.
@@ -161,8 +228,8 @@ class Firewall
 	 *
 	 * @return array Single element array of result
 	 */
-	private function prioritize( $results ){
-		
+	private function prioritize( $results )
+    {
 		$current_fw_result_priority = 0;
 		$result = array( 'status' => 'PASS', 'passed_ip' => '' );
 		
@@ -187,7 +254,6 @@ class Firewall
 		$result['passed'] = strpos( $result['status'], 'PASS' ) !== false;
 		
 		return $result;
-		
 	}
 	
 	/**
@@ -197,8 +263,8 @@ class Firewall
 	 *
 	 * @return bool
 	 */
-	private function is_whitelisted( $results ) {
-
+	private function isWhitelisted( $results )
+    {
         foreach ( $this->fw_modules as $module ) {
             if( array_key_exists( $module->module_name, $results ) ){
                 foreach ( $results[$module->module_name] as $fw_result ) {
@@ -213,28 +279,6 @@ class Firewall
             }
         }
 		return false;
-		
 	}
 
-	/**
-	 * Set FW success checked cookies for 20 min.
-	 * For emergency usage only.
-	 *
-	 * @return bool
-	 */
-	public static function temporary_skip()
-	{
-		global $apbct, $spbc;
-		if( ! empty( $_GET['access'] ) ){
-			$apbct_key = ! empty( $apbct->api_key ) ? $apbct->api_key : false;
-			$spbc_key  = ! empty( $spbc->api_key )  ? $spbc->api_key  : false;
-			if( ( $apbct_key !== false && $_GET['access'] === $apbct_key ) || ( $spbc_key !== false && $_GET['access'] === $spbc_key ) ){
-				\Cleantalk\Common\Helper::apbct_cookie__set('spbc_firewall_pass_key', md5(apbct_get_server_variable( 'REMOTE_ADDR' ) . $spbc_key),       time()+1200, '/', '');
-				\Cleantalk\Common\Helper::apbct_cookie__set('ct_sfw_pass_key',        md5(apbct_get_server_variable( 'REMOTE_ADDR' ) . $apbct->api_key), time()+1200, '/', null);
-				return true;
-			}
-		}
-		return false;
-	}
-	
 }
