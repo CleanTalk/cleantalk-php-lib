@@ -150,6 +150,7 @@ class Firewall
 			$module->setLogTableName( $this->log_table_name );
 			$module->setHelper( $this->helper );
             $module->setIpArray( $this->ip_array );
+            $module->setIsDebug( $this->debug );
 			$module->ipAppendAdditional( $this->ip_array );
 
             // Store the Module Obj
