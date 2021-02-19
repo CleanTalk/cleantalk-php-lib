@@ -198,7 +198,7 @@ abstract class Cron
             return;
         }
 
-        foreach( $tasks as & $task ){
+        foreach( $tasks as $task ){
 
             if( function_exists( $this->tasks[$task]['handler'] ) ){
 
@@ -219,7 +219,7 @@ abstract class Cron
 
                     if( $this->tasks[$task]['period'] == 0 ) {
                         // One time scheduled event
-                        unset( $task );
+                        unset( $this->tasks[$task] );
                     } else {
                         // Multi time scheduled event
                         $this->tasks[$task]['next_call'] = time() + $this->tasks[$task]['period'];
@@ -234,7 +234,7 @@ abstract class Cron
                 $this->tasks_completed[$task] = false;
             }
 
-        } unset( $task );
+        }
 
         $this->saveTasks( $this->tasks );
 
