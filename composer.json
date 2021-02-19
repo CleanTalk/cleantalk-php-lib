@@ -1,5 +1,10 @@
 {
     "require": {
-        "phpunit/phpunit": "7.*"
+        "phpunit/phpunit": "7.*",
+        "phpdocumentor/phpdocumentor": "*",
+        "ext-xsl": "*"
+    },
+    "scripts": {
+        "phpdoc": "vendor\\bin\\phpdoc -d . --ignore ./vendor/ -t ./docs"
     }
 }
