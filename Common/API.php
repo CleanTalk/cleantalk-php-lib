@@ -17,7 +17,7 @@ class API
 {
 	/* Default params  */
 	const URL = 'https://api.cleantalk.org';
-	const AGENT = 'ct-api-3.2';
+	const AGENT = 'ct-php-lib-1.0';
 	
 	/**
 	 * Wrapper for 2s_blacklists_db API method.
@@ -224,7 +224,7 @@ class API
 	 */
 	static public function method__spam_check($api_key, $data, $date = null, $do_check = true)
 	{
-		$request = array(
+		$request = Array(
 			'method_name' => 'spam_check',
 			'auth_key'    => $api_key,
 			'data'        => is_array($data) ? implode(',', $data) : $data,
@@ -280,7 +280,7 @@ class API
 		$request = array(
 			'auth_key'    => $api_key,
 			'method_name' => 'security_logs',
-			'timestamp'   => time(),
+			'timestamp'   => static::getCurrentTimestamp(),
 			'data'        => json_encode($data),
 			'rows'        => count($data),
 		);
@@ -307,7 +307,7 @@ class API
 		$request = array(
 			'auth_key'    => $api_key,
 			'method_name' => 'security_logs',
-			'timestamp'   => time(),
+			'timestamp'   => static::getCurrentTimestamp(),
 			'data_fw'     => json_encode($data),
 			'rows_fw'     => count($data),
 		);
@@ -617,7 +617,14 @@ class API
 		// Make URL string
 		$data_string = http_build_query($data);
 		$data_string = str_replace("&amp;", "&", $data_string);
-				
+		
+		// For debug purposes
+		if(defined('CLEANTALK_DEBUG') && CLEANTALK_DEBUG){
+			global $apbct_debug;
+			$apbct_debug['sent_data']      = $data;
+			$apbct_debug['request_string'] = $data_string;
+		}
+		
 		// Possibility to switch API url
 		$url = defined('CLEANTALK_API_URL') ? CLEANTALK_API_URL : $url;
 		
@@ -769,5 +776,10 @@ class API
 				break;
 		}
 	}
+
+    private static function getCurrentTimestamp()
+    {
+        return time();
+    }
 
 }
