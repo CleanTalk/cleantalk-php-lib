@@ -13,6 +13,7 @@ namespace Cleantalk\Common\Firewall;
  * @see           https://github.com/CleanTalk/php-antispam
  */
 
+use Cleantalk\Common\API;
 use Cleantalk\Common\DB;
 use Cleantalk\Common\Helper;
 use Cleantalk\Common\Variables\Get;
@@ -44,6 +45,11 @@ class Firewall
      * @var Helper
      */
 	private $helper;
+
+    /**
+     * @var API
+     */
+    private $api;
 
     /**
      * @var bool
@@ -121,6 +127,7 @@ class Firewall
 		$this->debug          = (bool) Get::get('debug');
 		$this->ip_array       = $this->ipGet( 'real', true );
 		$this->helper         = new Helper();
+		$this->api            = new API();
 	}
 
     /**
@@ -131,6 +138,16 @@ class Firewall
     public function setSpecificHelper( Helper $helper )
     {
         $this->helper = $helper;
+    }
+
+    /**
+     * Setting the specific extended API class
+     *
+     * @param API $api
+     */
+    public function setSpecificApi( API $api )
+    {
+        $this->api = $api;
     }
 
 	/**
@@ -297,5 +314,69 @@ class Firewall
         }
 		return false;
 	}
+
+    /**
+     * Sends and wipe SFW log
+     *
+     * @return array|bool array('error' => STRING)
+     */
+    public function sendLogs() {
+
+        //Getting logs
+        $query = "SELECT * FROM " . $this->log_table_name . ";";
+        $this->db->fetch_all( $query );
+
+        if( count( $this->db->result ) ){
+
+            //Compile logs
+            $data = array();
+            foreach( $this->db->result as $key => $value ){
+
+                // Converting statuses to API format
+                $value['status'] = $value['status'] === 'DENY_ANTICRAWLER'    ? 'BOT_PROTECTION'   : $value['status'];
+                $value['status'] = $value['status'] === 'PASS_ANTICRAWLER'    ? 'BOT_PROTECTION'   : $value['status'];
+                $value['status'] = $value['status'] === 'DENY_ANTICRAWLER_UA' ? 'BOT_PROTECTION'   : $value['status'];
+                $value['status'] = $value['status'] === 'PASS_ANTICRAWLER_UA' ? 'BOT_PROTECTION'   : $value['status'];
+
+                $value['status'] = $value['status'] === 'DENY_ANTIFLOOD'      ? 'FLOOD_PROTECTION' : $value['status'];
+                $value['status'] = $value['status'] === 'PASS_ANTIFLOOD'      ? 'FLOOD_PROTECTION' : $value['status'];
+
+                $value['status'] = $value['status'] === 'PASS_SFW__BY_COOKIE' ? null               : $value['status'];
+                $value['status'] = $value['status'] === 'PASS_SFW'            ? null               : $value['status'];
+                $value['status'] = $value['status'] === 'DENY_SFW'            ? null               : $value['status'];
+
+                $data[] = array(
+                    trim( $value['ip'] ),                                      // IP
+                    $value['blocked_entries'],                                 // Count showing of block pages
+                    $value['all_entries'] - $value['blocked_entries'],         // Count passed requests after block pages
+                    $value['entries_timestamp'],                               // Last timestamp
+                    $value['status'],                                          // Status
+                    $value['ua_name'],                                         // User-Agent name
+                    $value['ua_id'],                                           // User-Agent ID
+                );
+
+            }
+            unset( $key, $value );
+
+            //Sending the request
+            $api = $this->api;
+            $result = $api::method__sfw_logs( $this->api_key, $data );
+
+            //Checking answer and deleting all lines from the table
+            if( empty( $result['error'] ) ){
+                if( $result['rows'] == count( $data ) ){
+                    $this->db->execute( "TRUNCATE TABLE " . $this->log_table_name . ";" );
+                    return $result;
+                }
+
+                return array( 'error' => 'SENT_AND_RECEIVED_LOGS_COUNT_DOESNT_MACH' );
+            }
+
+            return $result;
+
+        }
+
+        return $result = array( 'rows' => 0 );
+    }
 
 }
