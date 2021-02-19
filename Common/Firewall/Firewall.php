@@ -20,11 +20,15 @@ use Cleantalk\Common\Variables\Server;
 
 class Firewall
 {
+    /**
+     * @var string
+     */
+    private $api_key;
 
     /**
      * @var array
      */
-	private $ip_array = array();
+	private $ip_array;
 
     /**
      * @var DB
@@ -105,11 +109,13 @@ class Firewall
     /**
      * Creates Database driver instance.
      *
+     * @param string $api_key
      * @param DB $db
      * @param string $log_table_name
      */
-	public function __construct( DB $db, $log_table_name )
+	public function __construct( $api_key, DB $db, $log_table_name )
 	{
+	    $this->api_key        = $api_key;
 		$this->db             = $db;
 		$this->log_table_name = $log_table_name;
 		$this->debug          = (bool) Get::get('debug');
@@ -129,6 +135,7 @@ class Firewall
 
 	/**
 	 * Loads the FireWall module to the array.
+     * Factory method for configure instance of FirewallModule.
 	 * Not returns anything, the result is private storage of the modules.
 	 *
 	 * @param FirewallModule $module
@@ -137,14 +144,16 @@ class Firewall
 	{
 		if( ! in_array( $module, $this->fw_modules ) ) {
 
-		    // Store the Module Obj
-            $this->fw_modules[ $module->module_name ] = $module;
-
             // Configure the Module Obj
+            $module->setApiKey( $this->api_key );
 			$module->setDb( $this->db );
+			$module->setLogTableName( $this->log_table_name );
 			$module->setHelper( $this->helper );
             $module->setIpArray( $this->ip_array );
 			$module->ipAppendAdditional( $this->ip_array );
+
+            // Store the Module Obj
+            $this->fw_modules[ $module->module_name ] = $module;
 
 		}
 	}
