@@ -121,13 +121,11 @@ abstract class FirewallModule {
 	{
 		$this->real_ip = isset($ips['real']) ? $ips['real'] : null;
 
-		if( Get::get( 'sfw_test_ip' ) ){
-			if( Helper::ip__validate( Get::get( 'sfw_test_ip' ) ) !== false ){
-				$ips['sfw_test'] = Get::get( 'sfw_test_ip' );
-				$this->test_ip   = Get::get( 'sfw_test_ip' );
-				$this->test      = true;
-			}
-		}
+		if( Get::get('sfw_test_ip') && Helper::ip__validate( Get::get('sfw_test_ip') ) !== false ) {
+            $ips['sfw_test'] = Get::get( 'sfw_test_ip' );
+            $this->test_ip   = Get::get( 'sfw_test_ip' );
+            $this->test      = true;
+        }
 	}
 	
 	/**
@@ -143,7 +141,7 @@ abstract class FirewallModule {
     /**
      * Set Log Table name
      *
-     * @param string $api_key
+     * @param string $log_table_name
      */
     public function setLogTableName( $log_table_name )
     {
