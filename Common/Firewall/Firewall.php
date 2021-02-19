@@ -32,6 +32,11 @@ class Firewall
 	private $db;
 
     /**
+     * @var string
+     */
+    private $log_table_name;
+
+    /**
      * @var Helper
      */
 	private $helper;
@@ -97,17 +102,19 @@ class Firewall
         return false;
     }
 
-	/**
-	 * Creates Database driver instance.
-	 *
-	 * @param $db
-	 */
-	public function __construct( DB $db )
+    /**
+     * Creates Database driver instance.
+     *
+     * @param DB $db
+     * @param string $log_table_name
+     */
+	public function __construct( DB $db, $log_table_name )
 	{
-		$this->db       = $db;
-		$this->debug    = (bool) Get::get('debug');
-		$this->ip_array = $this->ipGet( 'real', true );
-		$this->helper   = new Helper();
+		$this->db             = $db;
+		$this->log_table_name = $log_table_name;
+		$this->debug          = (bool) Get::get('debug');
+		$this->ip_array       = $this->ipGet( 'real', true );
+		$this->helper         = new Helper();
 	}
 
     /**
@@ -115,7 +122,7 @@ class Firewall
      *
      * @param Helper $helper
      */
-    public function setSpecificHelper(Helper $helper )
+    public function setSpecificHelper( Helper $helper )
     {
         $this->helper = $helper;
     }
