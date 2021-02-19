@@ -13,46 +13,111 @@ namespace Cleantalk\Common\Firewall;
  * @since 2.49
  */
 
+use Cleantalk\Common\DB;
 use Cleantalk\Common\Helper;
 use Cleantalk\Common\Variables\Get;
 
 abstract class FirewallModule {
 
-	public $module_name;
+    /**
+     * @var string
+     */
+    protected $api_key;
 
+    /**
+     * @var string
+     */
+	public $module_name = 'FireWall Module';
+
+    /**
+     * @var array
+     */
 	protected $ip_array = array();
 
+    /**
+     * @var DB
+     */
 	protected $db;
-	protected $db__table__logs;
-	protected $db__table__data;
+
+    /**
+     * @var string
+     */
+    protected $db_log_table_name;
+
+    /**
+     * @var string
+     */
+	protected $db_data_table_name;
+
+    /**
+     * @var Helper
+     */
+	protected $helper;
+
 	/**
 	 * @var string
 	 */
 	protected $real_ip;
+
 	/**
 	 * @var string
 	 */
 	protected $test_ip;
+
 	/**
 	 * @var bool
 	 */
 	protected $test;
 
+    /**
+     * @var bool
+     */
     protected $debug;
 
-    protected $debug_data = '';
+    /**
+     * @var array
+     */
+    protected $debug_data = array();
 
-	/**
-	 * FireWall_module constructor.
+    /**
+	 * FirewallModule constructor.
 	 * Use this method to prepare any data for the module working.
 	 *
-	 * @param $log_table
-	 * @param $data_table
+	 * @param string $data_table
 	 * @param array $params
 	 */
-	abstract public function __construct( $log_table, $data_table, $params = array() );
+	abstract public function __construct( $data_table, $params = array() );
 
-	public function ip__append_additional( & $ips )
+    /**
+     * Use this method to execute main logic of the module.
+     *
+     * @return array  Array of the check results
+     */
+    abstract public function check();
+
+    /**
+     * Do logic for denied request.
+     *
+     * @param string $result
+     * @return void
+     */
+    abstract public function actionsForDenied( $result );
+
+    /**
+     * Do logic for allowed request.
+     *
+     * @param string $result
+     * @return void
+     */
+    abstract public function actionsForPassed( $result );
+
+    /**
+     * Configure and set additional properties: real_ip, test_ip, test
+     *
+     * @param array $ips
+     * @return void
+     */
+    public function ipAppendAdditional( & $ips )
 	{
 		$this->real_ip = isset($ips['real']) ? $ips['real'] : null;
 
@@ -66,58 +131,96 @@ abstract class FirewallModule {
 	}
 	
 	/**
-	 * Use this method to execute main logic of the module.
-	 *
-	 * @return array  Array of the check results
+     * Set specify CMS based DB instance
+     *
+	 * @param DB $db
 	 */
-	abstract public function check();
-	
-	public function actions_for_denied( $result ){}
-	
-	public function actions_for_passed( $result ){}
-	
-	/**
-	 * @param mixed $db
-	 */
-	public function setDb( $db ) {
+	public function setDb( DB $db )
+    {
 		$this->db = $db;
 	}
-	
+
+    /**
+     * Set Log Table name
+     *
+     * @param string $api_key
+     */
+    public function setLogTableName( $log_table_name )
+    {
+        $this->db_log_table_name = $log_table_name;
+    }
+
+    /**
+     * Set specify CMS based Helper instance
+     *
+     * @param Helper $helper
+     */
+    public function setHelper( Helper $helper )
+    {
+        $this->helper = $helper;
+    }
+
+    /**
+     * Set API KEY
+     *
+     * @param string $api_key
+     */
+    public function setApiKey( $api_key )
+    {
+        $this->api_key = $api_key;
+    }
+
+    /**
+     * Set is debug property.
+     *
+     * @param bool $debug
+     */
+    public function setIsDebug( $debug )
+    {
+        $this->debug = $debug;
+    }
+
 	/**
-	 * @param array $ip_array
+     * Set visitor's IP
+     *
+	 * @param array $ip_array    $ip_array = array( 'real' => '1.2.3.4' )
 	 */
-	public function setIpArray( $ip_array ) {
+	public function setIpArray( $ip_array )
+    {
 		$this->ip_array = $ip_array;
 	}
-	
-	public function getIpArray() {
-		return $this->ip_array;
-	}
-	
-	/**
-	 * @param mixed $db__table__data
-	 */
-	public function setDbTableData( $db__table__data ) {
-		$this->db__table__data = $db__table__data;
-	}
-	
-	/**
-	 * @param mixed $db__table__logs
-	 */
-	public function setDbTableLogs( $db__table__logs ) {
-		$this->db__table__logs = $db__table__logs;
-	}
-	
-	public function _die( $result ){
-		
+
+    /**
+     * Default die page for blocked requests.
+     *
+     * @param array $result
+     */
+    public function _die( $result )
+    {
 		// Headers
-		if(headers_sent() === false){
+		if( headers_sent() === false ){
 			header('Expires: '.date(DATE_RFC822, mktime(0, 0, 0, 1, 1, 1971)));
 			header('Cache-Control: no-store, no-cache, must-revalidate');
 			header('Cache-Control: post-check=0, pre-check=0', FALSE);
 			header('Pragma: no-cache');
 			header("HTTP/1.0 403 Forbidden");
 		}
-		
 	}
+
+    /**
+     * This is a placeholder for WP translation function.
+     * For compatibility with any CMS.
+     *
+     * @param $string
+     * @param $text_domain
+     * @return mixed
+     */
+    public function __($string, $text_domain )
+    {
+        if( function_exists( '__' ) ) {
+            return __( $string, $text_domain );
+        }
+        return $string;
+    }
+
 }
