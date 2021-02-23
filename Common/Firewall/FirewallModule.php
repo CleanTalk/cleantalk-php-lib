@@ -213,7 +213,7 @@ abstract class FirewallModule {
      * @param $text_domain
      * @return mixed
      */
-    public function __($string, $text_domain )
+    public function __( $string, $text_domain )
     {
         if( function_exists( '__' ) ) {
             return __( $string, $text_domain );
