@@ -30,7 +30,7 @@ class API
 	 *
 	 * @return mixed|string|array('error' => STRING)
 	 */
-	static public function method__get_2s_blacklists_db($api_key, $out = null, $version = '1_0', $do_check = true)
+	public static function method__get_2s_blacklists_db($api_key, $out = null, $version = '1_0', $do_check = true)
 	{
 		$request = array(
 			'method_name' => '2s_blacklists_db',
@@ -63,7 +63,7 @@ class API
 	 *
 	 * @return array|bool|mixed
 	 */
-	static public function method__get_api_key($product_name, $email, $website, $platform, $timezone = null, $language = null, $user_ip = null, $wpms = false, $white_label = false, $hoster_api_key = '', $do_check = true)
+	public static function method__get_api_key($product_name, $email, $website, $platform, $timezone = null, $language = null, $user_ip = null, $wpms = false, $white_label = false, $hoster_api_key = '', $do_check = true)
 	{
 		$request = array(
 			'method_name'          => 'get_api_key',
@@ -95,7 +95,7 @@ class API
 	 *
 	 * @return array|bool|mixed
 	 */
-	static public function method__get_antispam_report($host, $period = 1, $do_check = true)
+	public static function method__get_antispam_report($host, $period = 1, $do_check = true)
 	{
 		$request = Array(
 			'method_name' => 'get_antispam_report',
@@ -118,7 +118,7 @@ class API
 	 *
 	 * @return array|bool|mixed
 	 */
-	static public function method__get_antispam_report_breif($api_key, $do_check = true)
+	public static function method__get_antispam_report_breif($api_key, $do_check = true)
 	{
 		$request = array(
 			'method_name' => 'get_antispam_report_breif',
@@ -142,7 +142,7 @@ class API
 	 *
 	 * @return array|bool|mixed
 	 */
-	static public function method__notice_paid_till($api_key, $path_to_cms, $product_name = 'antispam', $do_check = true)
+	public static function method__notice_paid_till($api_key, $path_to_cms, $product_name = 'antispam', $do_check = true)
 	{
 		$request = array(
 			'method_name'  => 'notice_paid_till',
@@ -172,7 +172,7 @@ class API
 	 *
 	 * @return array|bool|mixed
 	 */
-	static public function method__ip_info($data, $do_check = true)
+	public static function method__ip_info($data, $do_check = true)
 	{
 		$request = array(
 			'method_name' => 'ip_info',
@@ -195,7 +195,7 @@ class API
 	 *
 	 * @return array|bool|mixed
 	 */
-	static public function method__spam_check_cms($api_key, $data, $date = null, $do_check = true)
+	public static function method__spam_check_cms($api_key, $data, $date = null, $do_check = true)
 	{
 		$request = Array(
 			'method_name' => 'spam_check_cms',
@@ -222,7 +222,7 @@ class API
 	 *
 	 * @return array|bool|mixed
 	 */
-	static public function method__spam_check($api_key, $data, $date = null, $do_check = true)
+	public static function method__spam_check($api_key, $data, $date = null, $do_check = true)
 	{
 		$request = Array(
 			'method_name' => 'spam_check',
@@ -230,7 +230,9 @@ class API
 			'data'        => is_array($data) ? implode(',', $data) : $data,
 		);
 		
-		if($date) $request['date'] = $date;
+		if( $date ) {
+            $request['date'] = $date;
+        }
 		
 		$result = static::send_request($request, self::URL, 10);
 		$result = $do_check ? static::check_response($result, 'spam_check') : $result;
@@ -248,7 +250,7 @@ class API
 	 *
 	 * @return array|bool|mixed
 	 */
-	static public function method__sfw_logs($api_key, $data, $do_check = true)
+	public static function method__sfw_logs($api_key, $data, $do_check = true)
 	{
 		
 		$request = array(
@@ -275,7 +277,7 @@ class API
 	 *
 	 * @return array|bool|mixed
 	 */
-	static public function method__security_logs($api_key, $data, $do_check = true)
+	public static function method__security_logs($api_key, $data, $do_check = true)
 	{
 		$request = array(
 			'auth_key'    => $api_key,
@@ -301,7 +303,7 @@ class API
 	 *
 	 * @return array|bool|mixed
 	 */
-	static public function method__security_logs__sendFWData($api_key, $data, $do_check = true)
+	public static function method__security_logs__sendFWData($api_key, $data, $do_check = true)
 	{
 		
 		$request = array(
@@ -327,7 +329,7 @@ class API
 	 *
 	 * @return array|bool|mixed
 	 */
-	static public function method__security_logs__feedback($api_key, $do_check = true)
+	public static function method__security_logs__feedback($api_key, $do_check = true)
 	{
 		$request = array(
 			'auth_key'    => $api_key,
@@ -350,7 +352,7 @@ class API
 	 *
 	 * @return array|bool|mixed
 	 */
-	static public function method__security_firewall_data($api_key, $do_check = true)
+	public static function method__security_firewall_data($api_key, $do_check = true)
 	{
 		
 		$request = array(
@@ -373,7 +375,7 @@ class API
 	 *
 	 * @return array|bool|mixed
 	 */
-	static public function method__security_firewall_data_file($api_key, $do_check = true)
+	public static function method__security_firewall_data_file($api_key, $do_check = true)
 	{
 		
 		$request = array(
@@ -400,7 +402,7 @@ class API
 	 *
 	 * @return array|bool|mixed
 	 */
-	static public function method__security_linksscan_logs($api_key, $scan_time, $scan_result, $links_total, $links_list, $do_check = true)
+	public static function method__security_linksscan_logs($api_key, $scan_time, $scan_result, $links_total, $links_list, $do_check = true)
 	{
 		$request = array(
 			'auth_key'          => $api_key,
@@ -432,7 +434,7 @@ class API
 	 *
 	 * @return array|bool|mixed
 	 */
-	static public function method__security_mscan_logs($api_key, $service_id, $scan_time, $scan_result, $scanned_total, $modified, $unknown, $do_check = true)
+	public static function method__security_mscan_logs($api_key, $service_id, $scan_time, $scan_result, $scanned_total, $modified, $unknown, $do_check = true)
 	{
 		$request = array(
 			'method_name'      => 'security_mscan_logs',
@@ -471,7 +473,7 @@ class API
 	 *
 	 * @return array|bool|mixed
 	 */
-	static public function method__security_mscan_files($api_key, $file_path, $file, $file_md5, $weak_spots, $do_check = true)
+	public static function method__security_mscan_files($api_key, $file_path, $file, $file_md5, $weak_spots, $do_check = true)
 	{
 		$request = array(
 			'method_name'    => 'security_mscan_files',
@@ -499,7 +501,7 @@ class API
 	 *
 	 * @return array|bool|mixed
 	 */
-	static public function method__backlinks_check_cms($api_key, $data, $date = null, $do_check = true)
+	public static function method__backlinks_check_cms($api_key, $data, $date = null, $do_check = true)
 	{
 		$request = array(
 			'method_name' => 'backlinks_check_cms',
@@ -525,7 +527,7 @@ class API
 	 *
 	 * @return array|bool|mixed
 	 */
-	static public function method__security_backend_logs($api_key, $logs, $do_check = true)
+	public static function method__security_backend_logs($api_key, $logs, $do_check = true)
 	{
 		$request = array(
 			'method_name' => 'security_backend_logs',
@@ -554,7 +556,7 @@ class API
 	 *
 	 * @return array|bool|mixed
 	 */
-	static public function method__security_mscan_repairs($api_key, $repair_result, $repair_comment, $repaired_processed_files, $repaired_total_files_proccessed, $backup_id, $do_check = true)
+	public static function method__security_mscan_repairs($api_key, $repair_result, $repair_comment, $repaired_processed_files, $repaired_total_files_proccessed, $backup_id, $do_check = true)
 	{
 		$request = array(
 			'method_name'                  => 'security_mscan_repairs',
@@ -583,7 +585,7 @@ class API
 	 *
 	 * @return array|bool|mixed
 	 */
-	static public function method__request_checksums($api_key, $plugins_and_themes_to_refresh, $do_check = true)
+	public static function method__request_checksums($api_key, $plugins_and_themes_to_refresh, $do_check = true)
 	{
 		$request = array(
 			'method_name' => 'request_checksums',
@@ -607,7 +609,7 @@ class API
 	 *
 	 * @return array|bool
 	 */
-	static public function send_request($data, $url = self::URL, $timeout = 10, $ssl = false, $ssl_path = '')
+	public static function send_request($data, $url = self::URL, $timeout = 10, $ssl = false, $ssl_path = '')
 	{
 		// Possibility to switch agent vaersion
 		$data['agent'] = !empty($data['agent'])
@@ -698,7 +700,7 @@ class API
 	 *
 	 * @return mixed (array || array('error' => true))
 	 */
-	static public function check_response($result, $method_name = null)
+	public static function check_response($result, $method_name = null)
 	{
 		// Errors handling
 		// Bad connection
