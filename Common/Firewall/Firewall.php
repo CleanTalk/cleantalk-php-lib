@@ -376,7 +376,21 @@ class Firewall
 
         }
 
-        return $result = array( 'rows' => 0 );
+        return array( 'rows' => 0 );
+    }
+
+    /**
+     * Get and configure the FirewallUpdater object.
+     *
+     * @param string $data_table_name
+     * @return FirewallUpdater
+     */
+    public function getUpdater( $data_table_name )
+    {
+        $fw_updater = new FirewallUpdater( $this->api_key, $this->db, $data_table_name );
+        $fw_updater->setSpecificHelper( $this->helper );
+        $fw_updater->setSpecificApi( $this->api );
+        return $fw_updater;
     }
 
 }
