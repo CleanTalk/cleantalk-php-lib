@@ -20,4 +20,4 @@ spl_autoload_register( function( $class ){
     }
 });
 
-require_once '../examples/sfw_example.php';
+require_once dirname( dirname( __FILE__ ) ) . '/examples/sfw_example.php';
