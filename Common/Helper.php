@@ -979,6 +979,30 @@ class Helper
     }
 
     /**
+     * Wrapper for http_request
+     * Requesting HTTP response code for $url
+     *
+     * @param string $url
+     *
+     * @return array|mixed|string
+     */
+    public static function http__request__get_response_code($url ){
+        return static::http__request( $url, array(), 'get_code');
+    }
+
+    /**
+     * Wrapper for http_request
+     * Requesting data via HTTP request with GET method
+     *
+     * @param string $url
+     *
+     * @return array|mixed|string
+     */
+    public static function http__request__get_content($url ){
+        return static::http__request( $url, array(), 'get dont_split_to_array');
+    }
+
+    /**
      * Do the remote call to the host.
      *
      * @param string $rc_action
@@ -1059,5 +1083,21 @@ class Helper
     public static function setFwStats( $fw_stats )
     {
         die( __METHOD__ . ' method must be overloaded in the CMS-based Helper class' );
+    }
+
+    /**
+     * Implement here any actions after SFW updating finished.
+     *
+     * @return void
+     */
+    public static function SfwUpdate_DoFinisnAction()
+    {
+        // EXAMPLE
+        // global $apbct;
+        // $apbct->data['last_firewall_updated'] = current_time('timestamp');
+        // $apbct->save('data');
+        // $apbct->stats['sfw']['entries'] = $wpdb->get_var('SELECT COUNT(*) FROM ' . APBCT_TBL_FIREWALL_DATA );
+        // $apbct->stats['sfw']['last_update_time'] = time();
+        // $apbct->save('stats');
     }
 }
