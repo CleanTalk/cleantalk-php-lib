@@ -2,7 +2,9 @@
     "require": {
         "phpunit/phpunit": "7.*",
         "phpdocumentor/phpdocumentor": "*",
-        "ext-xsl": "*"
+        "ext-xsl": "*",
+        "ext-json": "*",
+        "ext-curl": "*"
     },
     "scripts": {
         "phpdoc": "vendor\\bin\\phpdoc -d . --ignore ./vendor/ -t ./docs"
