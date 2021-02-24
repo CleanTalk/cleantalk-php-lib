@@ -4,7 +4,8 @@
         "phpdocumentor/phpdocumentor": "*",
         "ext-xsl": "*",
         "ext-json": "*",
-        "ext-curl": "*"
+        "ext-curl": "*",
+        "ext-zlib": "*"
     },
     "scripts": {
         "phpdoc": "vendor\\bin\\phpdoc -d . --ignore ./vendor/ -t ./docs"
