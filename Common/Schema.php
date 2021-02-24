@@ -44,7 +44,7 @@ class Schema
 
     /**
      * @param null|string $table         Name of called table
-     * @return array                     Array of schemas
+     * @return array|string              Array of schemas or query string for selected scheme.
      * @throws \Exception                Throws if calling un-existed schema
      */
     public static function getSchema( $table = null )
