@@ -535,6 +535,7 @@ class Helper
 	 * @param array        $opts    Optional option for CURL connection
 	 *
 	 * @return array|bool (array || array('error' => true))
+     * @todo Have to replace this method to the new class like HttpHelper
 	 */
 	static public function http__request($url, $data = array(), $presets = null, $opts = array())
 	{
@@ -954,7 +955,8 @@ class Helper
      * If Apache web server is missing then making
      * Patch for apache_request_headers()
      *
-     * returns array
+     * @return array
+     * @todo Have to replace this method to the new class like HttpHelper
      */
     public static function http__get_headers(){
 
@@ -974,5 +976,88 @@ class Helper
             }
         }
         return $headers;
+    }
+
+    /**
+     * Do the remote call to the host.
+     *
+     * @param string $rc_action
+     * @param array $request_params
+     * @param array $patterns
+     * @return array|bool
+     * @todo Have to replace this method to the new class like HttpHelper
+     */
+    public static function http__request__rc_to_host($rc_action, $request_params, $patterns = array() )
+    {
+        $request_params__default = array(
+            'spbc_remote_call_action' => $rc_action,
+            'plugin_name'             => 'apbct',
+        );
+
+        $result__rc_check_website = static::http__request(
+            static::getSiteUrl(),
+            array_merge( $request_params__default, $request_params, array( 'test' => 'test' ) ),
+            array( 'get', )
+        );
+
+        if( empty( $result__rc_check_website['error'] ) ){
+
+            if( preg_match( '@^.*?OK$@', $result__rc_check_website) ){
+
+                static::http__request(
+                    static::getSiteUrl(),
+                    array_merge( $request_params__default, $request_params ),
+                    array_merge( array( 'get', ), $patterns )
+                );
+
+            }else
+                return array(
+                    'error' => 'WRONG_SITE_RESPONSE ACTION: ' . $rc_action . ' RESPONSE: ' . htmlspecialchars( substr(
+                            ! is_string( $result__rc_check_website )
+                                ? print_r( $result__rc_check_website, true )
+                                : $result__rc_check_website,
+                            0,
+                            400
+                        ) )
+                );
+        }else
+            return array( 'error' => 'WRONG_SITE_RESPONSE TEST ACTION: ' . $rc_action . ' ERROR: ' . $result__rc_check_website['error'] );
+
+        return true;
+    }
+
+    /**
+     * Get site url for remote calls.
+     *
+     * @return string@important This method can be overloaded in the CMS-based Helper class.
+     *
+     */
+    private static function getSiteUrl()
+    {
+        return ( isset( $_SERVER['HTTPS'] ) && $_SERVER['HTTPS'] === 'on' ? "https" : "http") . "://" . $_SERVER['HTTP_HOST'] . ( isset($_SERVER['SCRIPT_URL'] ) ? $_SERVER['SCRIPT_URL'] : '' );
+    }
+
+    /**
+     * Get fw stats from the storage.
+     *
+     * @return array
+     * @example array( 'firewall_updating' => false, 'firewall_updating_id' => md5(), 'firewall_update_percent' => 0, 'firewall_updating_last_start' => 0 )
+     * @important This method must be overloaded in the CMS-based Helper class.
+     */
+    public static function getFwStats()
+    {
+        die( __METHOD__ . ' method must be overloaded in the CMS-based Helper class' );
+    }
+
+    /**
+     * Save fw stats on the storage.
+     *
+     * @param array $fw_stats
+     * @return bool
+     * @important This method must be overloaded in the CMS-based Helper class.
+     */
+    public static function setFwStats( $fw_stats )
+    {
+        die( __METHOD__ . ' method must be overloaded in the CMS-based Helper class' );
     }
 }
