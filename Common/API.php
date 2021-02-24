@@ -779,6 +779,12 @@ class API
 		}
 	}
 
+    /**
+     * Get current timestamp for API calling.
+     *
+     * @return int
+     * @important This method can be overloaded in the CMS-based API class.
+     */
     private static function getCurrentTimestamp()
     {
         return time();
