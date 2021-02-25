@@ -2,7 +2,6 @@
 
 use Cleantalk\Common\DB;
 use Cleantalk\Common\Firewall\Firewall;
-use Cleantalk\Common\Firewall\FirewallUpdater;
 use Cleantalk\Common\Firewall\Modules\SFW;
 use Cleantalk\Common\RC;
 use Cleantalk\Common\Variables\Server;
