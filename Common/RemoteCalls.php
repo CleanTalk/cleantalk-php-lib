@@ -12,7 +12,7 @@ abstract class RemoteCalls
     /**
      * @var bool
      */
-    private static $rc_running;
+    private $rc_running;
 
     /**
      * @var string
@@ -22,7 +22,7 @@ abstract class RemoteCalls
     /**
      * @var array
      */
-    private $available_rc_actions = array();
+    private $available_rc_actions;
 
     public function __construct( $api_key )
     {
@@ -61,8 +61,9 @@ abstract class RemoteCalls
             $cooldown = isset( $actions[$action]['cooldown'] ) ? $actions[$action]['cooldown'] : self::COOLDOWN;
 
             // Return OK for test remote calls
-            if ( Get::get( 'test' ) )
+            if ( Get::get( 'test' ) ) {
                 die('OK');
+            }
 
             if( time() - $actions[ $action ]['last_call'] >= $cooldown || ( $action === 'sfw_update' && Get::get( 'file_urls' ) ) ){
 
@@ -81,8 +82,9 @@ abstract class RemoteCalls
                     if( method_exists( static::class, $action_method ) ){
 
                         // Delay before perform action;
-                        if ( Get::get( 'delay' ) )
-                            sleep( Get::get( 'delay' ) );
+                        if ( Get::get( 'delay' ) ) {
+                            sleep(Get::get('delay'));
+                        }
 
                         $action_result = static::$action_method();
 
