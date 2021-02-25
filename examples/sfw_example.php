@@ -3,7 +3,7 @@
 use Cleantalk\Common\DB;
 use Cleantalk\Common\Firewall\Firewall;
 use Cleantalk\Common\Firewall\Modules\SFW;
-use Cleantalk\Common\RC;
+use Cleantalk\Common\RemoteCalls;
 use Cleantalk\Common\Variables\Server;
 
 // For example
@@ -29,7 +29,7 @@ function apbct_sfw_check( $api_key = '' )
 
     if(
         Firewall::temporarySkip() ||
-        RC::check()
+        RemoteCalls::check()
     ) {
         return;
     }

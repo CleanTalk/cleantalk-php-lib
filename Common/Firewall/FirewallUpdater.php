@@ -5,7 +5,7 @@ namespace Cleantalk\Common\Firewall;
 use Cleantalk\Common\API;
 use Cleantalk\Common\DB;
 use Cleantalk\Common\Helper;
-use Cleantalk\Common\RC;
+use Cleantalk\Common\RemoteCalls;
 use Cleantalk\Common\Schema;
 use Cleantalk\Common\Variables\Get;
 
@@ -113,7 +113,7 @@ class FirewallUpdater
             );
         }
 
-        if( RC::check() ) {
+        if( RemoteCalls::check() ) {
             // Remote call is in process, do updating
 
             $file_urls   = Get::get('file_urls');

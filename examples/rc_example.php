@@ -1,6 +1,6 @@
 <?php
 
-use Cleantalk\Common\RC;
+use Cleantalk\Common\RemoteCalls;
 
 /**
  * Example function for adding Remote Calls handler.
@@ -12,14 +12,14 @@ function apbct_install_rc()
     $api_key = 'api_key';
 
     // Remote calls
-    if( RC::check() ) {
-        $rc = new CustomRC( $api_key );
+    if( RemoteCalls::check() ) {
+        $rc = new CustomRemoteCalls( $api_key );
         $rc->perform();
     }
 }
 
 
-class CustomRC extends RC
+class CustomRemoteCalls extends RemoteCalls
 {
     /**
      * SFW update

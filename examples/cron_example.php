@@ -1,7 +1,7 @@
 <?php
 
 use Cleantalk\Common\Cron;
-use Cleantalk\Common\RC;
+use Cleantalk\Common\RemoteCalls;
 
 /**
  * Example function for adding cron jobs.
@@ -26,7 +26,7 @@ function apbct_run_cron()
     $tasks_to_run = $cron->checkTasks(); // Check for current tasks. Drop tasks inner counters.
     if(
         ! empty( $tasks_to_run ) && // There is tasks to run
-        ! RC::check() && // Do not doing CRON in remote call action
+        ! RemoteCalls::check() && // Do not doing CRON in remote call action
         (
             ! defined( 'DOING_CRON' ) ||
             ( defined( 'DOING_CRON' ) && DOING_CRON !== true )

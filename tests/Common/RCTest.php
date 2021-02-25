@@ -1,6 +1,6 @@
 <?php
 
-use Cleantalk\Common\RC;
+use Cleantalk\Common\RemoteCalls;
 
 class RCTest extends PHPUnit\Framework\TestCase
 {
@@ -13,7 +13,7 @@ class RCTest extends PHPUnit\Framework\TestCase
     }
 
     public function testCheck() {
-        $rc_check = RC::check();
+        $rc_check = RemoteCalls::check();
         self::assertTrue( $rc_check );
     }
 

@@ -4,7 +4,7 @@ namespace Cleantalk\Common;
 
 use Cleantalk\Common\Variables\Get;
 
-abstract class RC
+abstract class RemoteCalls
 {
 
     const COOLDOWN = 10;
