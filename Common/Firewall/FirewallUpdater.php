@@ -165,7 +165,7 @@ class FirewallUpdater
                     // Do writing to the DB
                     reset( $lines );
                     for( $count_result = 0; current($lines) !== false; ) {
-                        $query = "INSERT INTO ".$this->fw_data_table_name." (network, mask, status) VALUES ";
+                        $query = "INSERT INTO ".$this->fw_data_table_name."_temp (network, mask, status) VALUES ";
                         for( $i = 0, $values = array(); self::WRITE_LIMIT !== $i && current( $lines ) !== false; $i ++, $count_result ++, next( $lines ) ){
                             $entry = current($lines);
                             if(empty($entry)) {
