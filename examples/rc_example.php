@@ -48,7 +48,12 @@ class CustomRemoteCalls extends RemoteCalls
      */
     protected function getAvailableRcActions()
     {
+        // JUST AN EXAMPLE
         return array(
+            'sfw_update_init' => array(
+                'last_call' => 0,
+                'cooldown' => 10
+            ),
             'sfw_update' => array(
                 'last_call' => 0,
                 'cooldown' => 0
