@@ -17,7 +17,7 @@ abstract class RemoteCalls
     /**
      * @var string
      */
-    private $api_key;
+    protected $api_key;
 
     /**
      * @var array
