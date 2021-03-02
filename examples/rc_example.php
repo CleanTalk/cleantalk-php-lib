@@ -28,8 +28,7 @@ class CustomRemoteCalls extends RemoteCalls
      */
     public function action__sfw_update()
     {
-        $api_key = 'api_key';
-        return apbct_sfw_update( $api_key );
+        return apbct_sfw_update( $this->api_key );
     }
 
     /**
@@ -39,7 +38,7 @@ class CustomRemoteCalls extends RemoteCalls
      */
     public function action__sfw_send_logs()
     {
-        return apbct_sfw_send_logs();
+        return apbct_sfw_send_logs( $this->api_key );
     }
 
     /**
