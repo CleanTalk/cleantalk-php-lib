@@ -8,6 +8,7 @@ use Cleantalk\Common\Helper;
 use Cleantalk\Common\RemoteCalls;
 use Cleantalk\Common\Schema;
 use Cleantalk\Common\Variables\Get;
+use Cleantalk\Common\Variables\Server;
 
 class FirewallUpdater
 {
@@ -208,23 +209,31 @@ class FirewallUpdater
                     // Updating end: Do finish actions.
                     } else {
 
-                        // @todo We have to handle errors here
-                        $this->deleteMainDataTables();
-                        // @todo We have to handle errors here
-                        $this->renameDataTables();
+                        // Wtite local IP as whitelisted
+                        $result = $this->writeDbExclusions();
 
-                        //Files array is empty update sfw stats
-                        $helper::SfwUpdate_DoFinisnAction();
+                        if( empty( $result['error'] ) && is_int( $result ) ) {
 
-                        $fw_stats['firewall_update_percent'] = 0;
-                        $fw_stats['firewall_updating_id'] = null;
-                        $helper::setFwStats( $fw_stats );
+                            // @todo We have to handle errors here
+                            $this->deleteMainDataTables();
+                            // @todo We have to handle errors here
+                            $this->renameDataTables();
 
-                        return true;
+                            //Files array is empty update sfw stats
+                            $helper::SfwUpdate_DoFinisnAction();
 
+                            $fw_stats['firewall_update_percent'] = 0;
+                            $fw_stats['firewall_updating_id'] = null;
+                            $helper::setFwStats( $fw_stats );
+
+                            return true;
+
+                        } else {
+                            return array( 'error' => 'SFW_UPDATE: EXCLUSIONS: ' . $result['error'] );
+                        }
                     }
                 } else {
-                    return $data;
+                    return array('error' => $lines['error']);
                 }
             }else {
                 return array('error' => 'SFW_UPDATE WRONG_FILE_URLS');
@@ -294,6 +303,45 @@ class FirewallUpdater
         }else {
             return array('error' => 'FILE_COULD_NOT_GET_RESPONSE_CODE: ' . $response_code['error']);
         }
+    }
+
+    /**
+     * Writing to the DB self IPs
+     *
+     * @return array|int
+     */
+    private function writeDbExclusions()
+    {
+        $query = "INSERT INTO ".$this->fw_data_table_name."_temp (network, mask, status) VALUES ";
+
+        $exclusions = array();
+
+        //Exclusion for servers IP (SERVER_ADDR)
+        if ( Server::get('HTTP_HOST') ) {
+
+            // Exceptions for local hosts
+            if( ! in_array( Server::get_domain(), array( 'lc', 'loc', 'lh' ) ) ){
+                $exclusions[] = Helper::dns__resolve( Server::get( 'HTTP_HOST' ) );
+                $exclusions[] = '127.0.0.1';
+            }
+        }
+
+        foreach ( $exclusions as $exclusion ) {
+            if ( Helper::ip__validate( $exclusion ) && sprintf( '%u', ip2long( $exclusion ) ) ) {
+                $query .= '(' . sprintf( '%u', ip2long( $exclusion ) ) . ', ' . sprintf( '%u', bindec( str_repeat( '1', 32 ) ) ) . ', 1),';
+            }
+        }
+
+        if( $exclusions ){
+
+            $sql_result = $this->db->execute( substr( $query, 0, - 1 ) . ';' );
+
+            return $sql_result === false
+                ? array( 'error' => 'COULD_NOT_WRITE_TO_DB 4: ' . $this->db->get_last_error() )
+                : count( $exclusions );
+        }
+
+        return 0;
     }
 
     /**
