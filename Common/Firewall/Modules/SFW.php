@@ -91,7 +91,7 @@ class SFW extends FirewallModule {
 			
 			$db_results = $this->db->fetch_all("SELECT
 				network, mask, status
-				FROM " . $this->db__table__data . "
+				FROM " . $this->db_data_table_name . "
 				WHERE network IN (". implode( ',', $needles ) .")
 				AND	network = " . $current_ip_v4 . " & mask 
 				AND " . rand( 1, 100000 ) . "  
