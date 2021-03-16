@@ -11,7 +11,7 @@ class SchemaTest extends \PHPUnit\Framework\TestCase
         $this->assertIsArray(
             Schema::getSchema()
         );
-        $this->assertIsArray(
+        $this->assertIsString(
             Schema::getSchema('sfw')
         );
         $this->assertIsArray(
