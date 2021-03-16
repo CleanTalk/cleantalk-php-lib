@@ -5,31 +5,19 @@ namespace Cleantalk\Common\Variables;
 /**
  * Class Server
  * Wrapper to safely get $_SERVER variables
- * @since 3.0
- * @package Cleantalk\Variables
+ *
+ * @package \CleantalkSP\Variables
  */
-class Server extends ServerVariables{
+class Server extends SuperGlobalVariables{
 	
-	static $instance;
-	
-	/**
-	 * Constructor
-	 * @return $this
-	 */
-	public static function getInstance(){
-		if (!isset(static::$instance)) {
-			static::$instance = new static;
-			static::$instance->init();
-		}
-		return static::$instance;
-	}
+	public static $instance;
 	
 	/**
 	 * Gets given $_SERVER variable and save it to memory
 	 *
 	 * @param string $name
 	 *
-	 * @return string       variable value or ''
+	 * @return mixed|string
 	 */
 	protected function get_variable( $name ){
 		
@@ -48,13 +36,17 @@ class Server extends ServerVariables{
 		// Convert to upper case for REQUEST_METHOD
 		if( in_array( $name, array( 'REQUEST_METHOD' ) ) )
 			$value = strtoupper( $value );
+        
+        // Convert to lower case for REQUEST_METHOD
+        if( in_array( $name, array( 'HTTPS' ) ) )
+            $value = strtolower( $value );
 		
-		// Convert HTML chars for HTTP_USER_AGENT, HTTP_REFERER, SERVER_NAME
-		if( in_array( $name, array( 'HTTP_USER_AGENT', 'HTTP_REFERER', 'SERVER_NAME' ) ) )
+		// Convert HTML chars for HTTP_USER_AGENT, HTTP_USER_AGENT, SERVER_NAME
+		if( in_array( $name, array( 'HTTP_USER_AGENT', 'HTTP_USER_AGENT', 'SERVER_NAME' ) ) )
 			$value = htmlspecialchars( $value );
 		
-		// Remember for further calls
-		static::getInstance()->remebmer_variable( $name, $value );
+		// Remember for thurther calls
+		static::getInstance()->remember_variable( $name, $value );
 		
 		return $value;
 	}
@@ -62,22 +54,65 @@ class Server extends ServerVariables{
 	/**
 	 * Checks if $_SERVER['REQUEST_URI'] contains string
 	 *
-	 * @param string $string needle
+	 * @param string $needle
 	 *
 	 * @return bool
 	 */
-	public static function in_uri( $string ){
-		return self::has_string( 'REQUEST_URI', $string );
+	public static function in_uri( $needle ){
+		return self::has_string( 'REQUEST_URI', $needle );
+	}
+	
+	public static function in_host( $needle ){
+		return self::has_string( 'HTTP_HOST', $needle );
+	}
+	
+	public static function get_domain(){
+		preg_match( '@\.(\S+)/?$@', self::get( 'HTTP_HOST' ), $matches );
+		return isset( $matches[1] ) ? $matches[1] : false;
+	}
+	
+	public static function getHomeURL( $scheme = null ){
+		return ( self::isSSL() ? 'https' : self::get( 'REQUEST_SCHEME' ) ) . '://' . self::get( 'HTTP_HOST' ) . '/';
 	}
 	
 	/**
 	 * Checks if $_SERVER['REQUEST_URI'] contains string
 	 *
-	 * @param string $string needle
+	 * @param string $needle needle
 	 *
 	 * @return bool
 	 */
-	public static function in_referer( $string ){
-		return self::has_string( 'HTTP_REFERER', $string );
+	public static function in_referer( $needle ){
+		return self::has_string( 'HTTP_REFERER', $needle );
 	}
+	
+	/**
+	 * Checks if $_SERVER['REQUEST_URI'] contains string
+	 *
+	 * @return bool
+	 */
+	public static function is_post(){
+		return self::get( 'REQUEST_METHOD' ) === 'POST';
+	}
+    
+    /**
+     * Determines if SSL is used.
+     *
+     * @return bool True if SSL, otherwise false.
+     */
+    public static function isSSL() {
+        if(
+            self::get( 'HTTPS' ) === 'on' ||
+            self::get( 'HTTPS' ) === '1' ||
+            self::get( 'SERVER_PORT' ) == '443'
+        ){
+            return true;
+        }
+        
+        return false;
+    }
+    
+    public static function getURL(){
+        return substr( self::getHomeURL(), 0, -1) . self::get( 'REQUEST_URI');
+    }
 }

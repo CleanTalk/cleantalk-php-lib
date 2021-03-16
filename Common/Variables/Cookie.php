@@ -6,33 +6,20 @@ namespace Cleantalk\Common\Variables;
  * Class Cookie
  * Safety handler for $_COOKIE
  *
- * @usage \Cleantalk\Variables\Cookie::get( $name );
  * @since 3.0
  * @package Cleantalk\Variables
  */
-class Cookie extends ServerVariables{
+class Cookie extends SuperGlobalVariables{
 	
 	static $instance;
-	
-	/**
-	 * Constructor
-	 * @return $this
-	 */
-	public static function getInstance(){
-		if (!isset(static::$instance)) {
-			static::$instance = new static;
-			static::$instance->init();
-		}
-		return static::$instance;
-	}
 	
 	/**
 	 * Gets given $_COOKIE variable and save it to memory
 	 * @param $name
 	 *
-	 * @return string       variable value or ''
+	 * @return mixed|string
 	 */
-	protected function get_variable( $name ){
+	protected function get_variable( $name, $do_decode = true ){
 		
 		// Return from memory. From $this->variables
 		if(isset(static::$instance->variables[$name]))
@@ -44,8 +31,7 @@ class Cookie extends ServerVariables{
 		if( empty( $value ) )
 			$value = isset( $_COOKIE[ $name ] ) ? $_COOKIE[ $name ]	: '';
 		
-		// Remember for further calls
-		static::getInstance()->remebmer_variable( $name, $value );
+		$value = $do_decode ? urldecode( $value ) : $value;
 		
 		return $value;
 	}
