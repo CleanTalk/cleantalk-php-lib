@@ -85,14 +85,16 @@ class FirewallUpdater
         $fw_stats = $helper::getFwStats();
 
         // Prevent start another update at a time
-        if( ! Get::get('firewall_updating_id') &&
+        if( Get::get('spbc_remote_call_action') == 'sfw_update__write_base' &&
+            ! Get::get('firewall_updating_id') &&
             $fw_stats['firewall_updating_id'] &&
             time() - $fw_stats['firewall_updating_last_start'] < 60 ){
             return true;
         }
 
         // Check if the update performs right now. Blocks remote calls with different ID
-        if( Get::get('firewall_updating_id') &&
+        if( Get::get('spbc_remote_call_action') == 'sfw_update__write_base' &&
+            Get::get('firewall_updating_id') &&
             Get::get('firewall_updating_id') !== $fw_stats['firewall_updating_id']
         ) {
             return array( 'error' => 'FIREWALL_IS_UPDATING' );
@@ -133,7 +135,7 @@ class FirewallUpdater
                         $data = $this->unpackData( $blacklists['file_url'] );
                         if( empty( $data['error'] ) ) {
                             return Helper::http__request__rc_to_host(
-                                'sfw_update',
+                                'sfw_update__write_base',
                                 array(
                                     'spbc_remote_call_token'  => md5( $this->api_key ),
                                     'firewall_updating_id'    => $fw_stats['firewall_updating_id'],
@@ -159,8 +161,8 @@ class FirewallUpdater
 
                 $file_url = 'https://' . str_replace( 'multifiles', $current_url, $file_urls );
 
-                $data = $this->unpackData( $file_url );
-                if( empty( $data['error'] ) ) {
+                $lines = $this->unpackData( $file_url );
+                if( empty( $lines['error'] ) ) {
 
                     // Do writing to the DB
                     reset( $lines );
@@ -184,19 +186,19 @@ class FirewallUpdater
                             $this->db->execute( $query );
                         }
                     }
-
+                    $current_url++;
                     $fw_stats['firewall_update_percent'] = round( ( ( (int) $current_url + 1 ) / (int) $url_count ), 2) * 100;
                     $helper::setFwStats( $fw_stats );
 
                     // Updating continue: Do next remote call.
                     if ( $url_count > $current_url ) {
                         return Helper::http__request__rc_to_host(
-                            'sfw_update',
+                            'sfw_update__write_base',
                             array(
                                 'spbc_remote_call_token'  => md5( $this->api_key ),
                                 'file_urls'               => str_replace( array( 'http://', 'https://' ), '', $file_urls ),
                                 'url_count'               => $url_count,
-                                'current_url'             => ++$current_url,
+                                'current_url'             => $current_url,
                                 // Additional params
                                 'firewall_updating_id'    => $fw_stats['firewall_updating_id'],
                             ),
