@@ -65,7 +65,7 @@ abstract class RemoteCalls
                 die('OK');
             }
 
-            if( time() - $actions[ $action ]['last_call'] >= $cooldown ) ){
+            if( time() - $actions[ $action ]['last_call'] >= $cooldown ){
 
                 $actions[$action]['last_call'] = time();
 
