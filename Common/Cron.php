@@ -35,6 +35,16 @@ abstract class Cron
      */
     public function __construct($cron_option_name = 'cleantalk_cron', $task_execution_min_interval = 120, $cron_execution_min_interval = 600)
     {
+    
+        /*
+         * @todo perform this logic
+        // Assign properties from the given parameters if exists
+        // Notice that if $this->$param_name is NULL new value won't be set
+        foreach( $params as $param_name => $param ){
+            $this->$param_name = isset( $this->$param_name ) ? $param : null;
+        }
+        */
+        
         $this->cron_option_name = $cron_option_name;
         $this->task_execution_min_interval = $task_execution_min_interval;
         $this->cron_execution_min_interval = $cron_execution_min_interval;
@@ -146,7 +156,7 @@ abstract class Cron
     public function getCronOptionName() {
         return $this->cron_option_name;
     }
-        
+    
     /**
      * Getting tasks which should be run
      *
