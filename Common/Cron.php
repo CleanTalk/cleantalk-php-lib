@@ -222,7 +222,7 @@ abstract class Cron
 
         foreach( $tasks as $task ){
 
-            if( function_exists( $this->tasks[$task]['handler'] ) ){
+            if( is_callable( $this->tasks[$task]['handler'] ) ){
 
                 if( $this->debug ) {
                     error_log( var_export( 'Task ' . $task . ' will be run.', 1 ) );
