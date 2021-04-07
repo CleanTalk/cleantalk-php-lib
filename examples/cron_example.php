@@ -11,8 +11,12 @@ use Cleantalk\Common\RemoteCalls;
 function apbct_install_cron()
 {
     $cron = new CustomCron();
+    // From global function
     $cron->addTask( 'sfw_update', 'apbct_sfw_update', 86400, time() + 60 );
     $cron->addTask( 'sfw_send_logs', 'apbct_sfw_send_logs', 3600 );
+    // Or from any namespace
+    $cron->addTask( 'sfw_update', '\SomeNameSpace\Class::apbct_sfw_update', 86400, time() + 60 );
+    $cron->addTask( 'sfw_send_logs', '\SomeNameSpace\Class::apbct_sfw_send_logs', 3600 );
 }
 
 /**
