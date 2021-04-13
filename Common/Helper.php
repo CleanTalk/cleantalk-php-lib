@@ -1235,10 +1235,6 @@ class Helper
             case is_string($param) && strtolower($param) == 'null':
                 $param = 'NULL';
                 break;
-            case is_string($param):
-                global $wpdb;
-                $param = $quotes . $wpdb->_real_escape($param) . $quotes;
-                break;
         }
         return $param;
     }
