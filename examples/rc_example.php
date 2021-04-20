@@ -68,11 +68,14 @@ class CustomRemoteCalls extends RemoteCalls
     /**
      * Set last call timestamp and save it to the storage.
      *
-     * @param array $action
+     * @param string $action
      * @return void
      */
     protected function setLastCall( $action )
     {
-        // TODO: Implement setLastCall() method.
+        // @ToDo this code is just an example
+        $remote_calls = $this->getAvailableRcActions();
+        $remote_calls[$action]['last_call'] = time();
+        // @ToDo do save the remote calls to the storage
     }
 }
