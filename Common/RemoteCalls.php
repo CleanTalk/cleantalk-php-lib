@@ -122,7 +122,7 @@ abstract class RemoteCalls
     /**
      * Set last call timestamp and save it to the storage.
      *
-     * @param array $action
+     * @param string $action
      * @return bool
      */
     abstract protected function setLastCall( $action );
