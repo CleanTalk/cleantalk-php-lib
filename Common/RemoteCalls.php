@@ -19,6 +19,25 @@ abstract class RemoteCalls
      */
     protected $api_key;
 
+    protected $default_rc = [
+        'close_renew_banner' => [
+            'last_call' => 0,
+            'cooldown' => self::COOLDOWN,
+        ],
+        'sfw_update' => [
+            'last_call' => 0,
+            'cooldown' => self::COOLDOWN,
+        ],
+        'sfw_send_logs' => [
+            'last_call' => 0,
+            'cooldown' => self::COOLDOWN,
+        ],
+        'sfw_update__write_base' => [
+            'last_call' => 0,
+            'cooldown' => 0,
+        ],
+    ];
+    
     /**
      * @var array
      */
