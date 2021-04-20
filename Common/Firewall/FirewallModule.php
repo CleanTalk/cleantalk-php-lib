@@ -145,6 +145,7 @@ abstract class FirewallModule {
      */
     public function setLogTableName( $log_table_name )
     {
+        $this->db_data_table_name = $this->db->prefix . $this->db_data_table_name;
         $this->db_log_table_name = $log_table_name;
     }
 
