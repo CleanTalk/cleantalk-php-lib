@@ -16,6 +16,7 @@ namespace Cleantalk\Common\Firewall;
 use Cleantalk\Common\API;
 use Cleantalk\Common\DB;
 use Cleantalk\Common\Helper;
+use Cleantalk\Common\Variables\Cookie;
 use Cleantalk\Common\Variables\Get;
 use Cleantalk\Common\Variables\Server;
 
@@ -104,8 +105,8 @@ class Firewall
             $apbct_key = ! empty( $apbct->api_key ) ? $apbct->api_key : false;
             $spbc_key  = ! empty( $spbc->api_key )  ? $spbc->api_key  : false;
             if( ( $apbct_key !== false && $_GET['access'] === $apbct_key ) || ( $spbc_key !== false && $_GET['access'] === $spbc_key ) ){
-                Helper::apbct_cookie__set('spbc_firewall_pass_key', md5(Server::get( 'REMOTE_ADDR' ) . $spbc_key),       time()+1200, '/', '');
-                Helper::apbct_cookie__set('ct_sfw_pass_key',        md5(Server::get( 'REMOTE_ADDR' ) . $apbct_key), time()+1200, '/', null);
+                Cookie::set('spbc_firewall_pass_key', md5(Server::get( 'REMOTE_ADDR' ) . $spbc_key),       time()+1200, '/', '');
+                Cookie::set('ct_sfw_pass_key',        md5(Server::get( 'REMOTE_ADDR' ) . $apbct_key), time()+1200, '/', null);
                 return true;
             }
         }
