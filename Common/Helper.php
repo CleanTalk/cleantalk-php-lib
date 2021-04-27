@@ -1098,29 +1098,11 @@ class Helper
      * @param string $samesite
      *
      * @return void
+     * @deprecated Use \Cleantalk\Common\Variables\Cookie:set() instead
      */
-    public static function apbct_cookie__set ($name, $value = '', $expires = 0, $path = '', $domain = null, $secure = false, $httponly = false, $samesite = 'Lax' ) {
+    public static function apbct_cookie__set ( $name, $value = '', $expires = 0, $path = '', $domain = null, $secure = false, $httponly = false, $samesite = 'Lax' ) {
 
-        // For PHP 7.3+ and above
-        if( version_compare( phpversion(), '7.3.0', '>=' ) ){
-
-            $params = array(
-                'expires'  => $expires,
-                'path'     => $path,
-                'domain'   => $domain,
-                'secure'   => $secure,
-                'httponly' => $httponly,
-            );
-
-            if($samesite)
-                $params['samesite'] = $samesite;
-
-            setcookie( $name, $value, $params );
-
-            // For PHP 5.6 - 7.2
-        }else {
-            setcookie( $name, $value, $expires, $path, $domain, $secure, $httponly );
-        }
+        \Cleantalk\Common\Variables\Cookie::set( $name, $value, $expires, $path, $domain, $httponly, $samesite );
 
     }
 	
