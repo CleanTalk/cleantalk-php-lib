@@ -19,24 +19,24 @@ abstract class RemoteCalls
      */
     protected $api_key;
 
-    protected $default_rc = [
-        'close_renew_banner' => [
+    protected $default_rc = array(
+        'close_renew_banner' => array(
             'last_call' => 0,
             'cooldown' => self::COOLDOWN,
-        ],
-        'sfw_update' => [
+        ),
+        'sfw_update' => array(
             'last_call' => 0,
             'cooldown' => self::COOLDOWN,
-        ],
-        'sfw_send_logs' => [
+        ),
+        'sfw_send_logs' => array(
             'last_call' => 0,
             'cooldown' => self::COOLDOWN,
-        ],
-        'sfw_update__write_base' => [
+        ),
+        'sfw_update__write_base' => array(
             'last_call' => 0,
             'cooldown' => 0,
-        ],
-    ];
+        ),
+    );
     
     /**
      * @var array
