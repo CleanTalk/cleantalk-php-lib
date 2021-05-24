@@ -32,6 +32,10 @@ abstract class Cron
     /**
      * Cron constructor.
      * Getting tasks option.
+     *
+     * @param string $cron_option_name
+     * @param int $task_execution_min_interval
+     * @param int $cron_execution_min_interval
      */
     public function __construct($cron_option_name = 'cleantalk_cron', $task_execution_min_interval = 120, $cron_execution_min_interval = 600)
     {
