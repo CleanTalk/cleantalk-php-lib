@@ -37,7 +37,18 @@ function apbct_run_cron()
         )
     ){
         $cron_res = $cron->runTasks( $tasks_to_run );
-        // Handle the $cron_res for errors here.
+
+        // Errors handling
+        if( is_array( $cron_res ) ) {
+            foreach( $cron_res as $task => $res ) {
+                if( $res === true ) {
+                    // Do clearing the error
+                } else {
+                    // Do logging the error
+                }
+            }
+        }
+
     }
 }
 

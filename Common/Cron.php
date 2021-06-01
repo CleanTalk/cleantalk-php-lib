@@ -252,12 +252,12 @@ abstract class Cron
                     }
 
                 }else{
-                    $this->tasks_completed[$task] = false;
+                    $this->tasks_completed[$task] = $result['error'];
                     $this->tasks[$task]['next_call'] = time() + $this->tasks[$task]['period'] / 4;
                 }
 
             }else{
-                $this->tasks_completed[$task] = false;
+                $this->tasks_completed[$task] = $this->tasks[$task]['handler'].'_IS_NOT_EXISTS';
             }
 
         }
