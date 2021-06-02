@@ -29,7 +29,7 @@ function apbct_run_cron()
     $cron = new CustomCron();
     $tasks_to_run = $cron->checkTasks(); // Check for current tasks. Drop tasks inner counters.
     if(
-        ! empty( $tasks_to_run ) && // There is tasks to run
+        $tasks_to_run && // There is tasks to run
         ! RemoteCalls::check() && // Do not doing CRON in remote call action
         (
             ! defined( 'DOING_CRON' ) ||
