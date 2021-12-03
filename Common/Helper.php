@@ -545,7 +545,7 @@ class Helper
 			'pswd'
 		);
 
-		// Skip feilds with these strings and known service fields
+		// Skip fields with these strings and known service fields
 		$skip_fields_with_strings = array(
 			// Common
 			'ct_checkjs', //Do not send ct_checkjs
@@ -576,21 +576,8 @@ class Helper
 			// Ninja Forms
 			'formData_id',
 			'formData_settings',
-			'formData_fields_\d+_id',
-			'formData_fields_\d+_files.*',
 			// E_signature
 			'recipient_signature',
-			'output_\d+_\w{0,2}',
-			// Contact Form by Web-Settler protection
-			'_formId',
-			'_returnLink',
-			// Social login and more
-			'_save',
-			'_facebook',
-			'_social',
-			'user_login-',
-			// Contact Form 7
-			'_wpcf7',
 			'avatar__file_image_data',
 			'task',
 			'page_url',
@@ -609,6 +596,25 @@ class Helper
 			'ct_action',
 			'ct_method',
 		);
+
+        $skip_fields_with_strings_by_regexp = array(
+            // Ninja Forms
+            'formData_fields_\d+_id',
+            'formData_fields_\d+_files.*',
+            // E_signature
+            'output_\d+_\w{0,2}',
+            // Contact Form by Web-Settler protection
+            '_formId',
+            '_returnLink',
+            // Social login and more
+            '_save',
+            '_facebook',
+            '_social',
+            'user_login-',
+            // Contact Form 7
+            '_wpcf7',
+        );
+
 		// Reset $message if we have a sign-up data
 		$skip_message_post = array(
 			'edd_action', // Easy Digital Downloads
@@ -657,12 +663,22 @@ class Helper
 					// Skipping fields names with strings from (array)skip_fields_with_strings
 					foreach ($skip_fields_with_strings as $needle)
 					{
-						if (preg_match("/" . $needle . "/", $prev_name . $key) == 1)
+						if ($prev_name . $key === $needle)
 						{
 							continue(2);
 						}
 					}
 					unset($needle);
+
+                    // Skipping fields names with strings from (array)skip_fields_with_strings_by_regexp
+                    foreach ($skip_fields_with_strings_by_regexp as $needle)
+                    {
+                        if (preg_match("/" . $needle . "/", $prev_name . $key) == 1)
+                        {
+                            continue(2);
+                        }
+                    }
+                    unset($needle);
 
 					// Obfuscating params
 					foreach ($obfuscate_params as $needle)
