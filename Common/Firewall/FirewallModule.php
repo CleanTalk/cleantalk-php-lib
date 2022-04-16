@@ -15,7 +15,7 @@ namespace Cleantalk\Common\Firewall;
 
 use Cleantalk\Common\DB;
 use Cleantalk\Common\Helper;
-use Cleantalk\Common\Variables\Get;
+use Cleantalk\Variables\Get;
 
 abstract class FirewallModule {
 

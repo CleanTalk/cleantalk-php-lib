@@ -2,7 +2,7 @@
 
 namespace Cleantalk\Common;
 
-use Cleantalk\Common\Variables\Server;
+use Cleantalk\Variables\Server;
 
 /**
  * CleanTalk Helper class.
@@ -1114,11 +1114,11 @@ class Helper
      * @param string $samesite
      *
      * @return void
-     * @deprecated Use \Cleantalk\Common\Variables\Cookie:set() instead
+     * @deprecated Use \Cleantalk\Variables\Cookie:set() instead
      */
     public static function apbct_cookie__set ( $name, $value = '', $expires = 0, $path = '', $domain = null, $secure = false, $httponly = false, $samesite = 'Lax' ) {
 
-        \Cleantalk\Common\Variables\Cookie::set( $name, $value, $expires, $path, $domain, $httponly, $samesite );
+        \Cleantalk\Variables\Cookie::set( $name, $value, $expires, $path, $domain, $httponly, $samesite );
 
     }
 

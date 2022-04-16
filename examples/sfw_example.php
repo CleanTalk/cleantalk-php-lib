@@ -4,7 +4,7 @@ use Cleantalk\Common\DB;
 use Cleantalk\Common\Firewall\Firewall;
 use Cleantalk\Common\Firewall\Modules\SFW;
 use Cleantalk\Common\RemoteCalls;
-use Cleantalk\Common\Variables\Server;
+use Cleantalk\Variables\Server;
 
 // For example
 define( 'APBCT_TBL_FIREWALL_DATA', 'cleantalk_sfw_logs' );

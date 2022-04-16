@@ -1,6 +1,6 @@
 <?php
 
-namespace Cleantalk\Common\Variables;
+namespace Cleantalk\Variables;
 
 class ServerTest extends \PHPUnit\Framework\TestCase
 {
@@ -47,16 +47,16 @@ class ServerTest extends \PHPUnit\Framework\TestCase
         self::assertEmpty($wrong_var);
     }
 
-    public function testIn_uri()
+    public function testInUri()
     {
-        self::assertTrue( Server::in_uri( 'request_uri' ) );
-        self::assertFalse( Server::in_uri( 'wrong_request_uri' ) );
+        self::assertTrue( Server::inUri( 'request_uri' ) );
+        self::assertFalse( Server::inUri( 'wrong_request_uri' ) );
     }
 
-    public function testIn_referer()
+    public function testInReferer()
     {
-        self::assertTrue( Server::in_referer( 'referer' ) );
-        self::assertFalse( Server::in_referer( 'wrong_referer' ) );
+        self::assertTrue( Server::inReferer( 'referer' ) );
+        self::assertFalse( Server::inReferer( 'wrong_referer' ) );
     }
 
     protected function tearDown()

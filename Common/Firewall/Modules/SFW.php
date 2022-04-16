@@ -5,9 +5,9 @@ namespace Cleantalk\Common\Firewall\Modules;
 use Cleantalk\Common\Firewall\Firewall;
 use Cleantalk\Common\Firewall\FirewallModule;
 use Cleantalk\Common\Schema;
-use Cleantalk\Common\Variables\Cookie;
-use Cleantalk\Common\Variables\Get;
-use Cleantalk\Common\Variables\Server;
+use Cleantalk\Variables\Cookie;
+use Cleantalk\Variables\Get;
+use Cleantalk\Variables\Server;
 
 class SFW extends FirewallModule {
 

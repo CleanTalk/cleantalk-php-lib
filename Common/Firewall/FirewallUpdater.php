@@ -7,8 +7,8 @@ use Cleantalk\Common\DB;
 use Cleantalk\Common\Helper;
 use Cleantalk\Common\RemoteCalls;
 use Cleantalk\Common\Schema;
-use Cleantalk\Common\Variables\Get;
-use Cleantalk\Common\Variables\Server;
+use Cleantalk\Variables\Get;
+use Cleantalk\Variables\Server;
 
 class FirewallUpdater
 {

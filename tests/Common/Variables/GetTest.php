@@ -1,6 +1,6 @@
 <?php
 
-namespace Cleantalk\Common\Variables;
+namespace Cleantalk\Variables;
 
 class GetTest extends \PHPUnit\Framework\TestCase
 {

@@ -2,7 +2,7 @@
 
 namespace Cleantalk\Common;
 
-use Cleantalk\Common\Variables\Get;
+use Cleantalk\Variables\Get;
 
 abstract class RemoteCalls
 {
