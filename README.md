@@ -1,4 +1,4 @@
 [![Build Status](https://travis-ci.org/CleanTalk/cleantalk-php-lib.svg?branch=master)](https://travis-ci.org/CleanTalk/cleantalk-php-lib)
 
 # Cleantalk team php lib
-Version 1.0
+Version 2.0.0

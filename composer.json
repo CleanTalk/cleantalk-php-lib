@@ -2,7 +2,7 @@
     "name": "cleantalk/cleantalk-php-lib",
     "description": "CleanTalk Anti-Spam php library",
     "type": "cleantalk-apbct-lib",
-    "version": "1.0.0",
+    "version": "2.0.0",
     "authors": [
         {
             "name": "CleanTalk Team",
