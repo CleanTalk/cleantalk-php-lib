@@ -5,6 +5,7 @@
 	<!-- What to scan -->
 	<file>../</file>
 	<exclude-pattern>/vendor/</exclude-pattern>
+	<exclude-pattern>/tests/</exclude-pattern>
 	<exclude-pattern>/node_modules/</exclude-pattern>
 
 	<!-- How to scan -->
@@ -14,6 +15,7 @@
 	<arg name="basepath" value="./"/><!-- Strip the file paths down to the relevant bit -->
 	<arg name="colors"/>
 	<arg name="extensions" value="php"/>
+	<arg name="exclude" value="PSR12.ControlStructures.ControlStructureSpacing"/>
 
 	<!-- Rules: Check PHP version compatibility -->
 	<!-- https://github.com/PHPCompatibility/PHPCompatibility#sniffing-your-code-for-compatibility-with-specific-php-versions -->
