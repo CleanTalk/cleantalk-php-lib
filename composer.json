@@ -25,7 +25,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://github.com/Glomberg/CleantalkApbct-Installer"
+            "url": "https://github.com/CleanTalk/apbct-installer-composer-plugin"
         }
     ],
     "config": {
