@@ -15,6 +15,7 @@ jobs:
   include:
     - env: TRAVISCI=phpunit
     - env: TRAVISCI=phpcs
+    - env: COMPOSER_VERSION=2.3.5
 
 before_script:
   - |
