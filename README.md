@@ -2,3 +2,7 @@
 
 # Cleantalk team php lib
 Version 2.0.0
+
+## Requirements
+
+* CleanTalk account https://cleantalk.org/register?product=anti-spam
