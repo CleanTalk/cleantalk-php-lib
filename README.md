@@ -3,6 +3,8 @@
 # Cleantalk team php lib
 Version 2.0.0
 
+If you find this project useful, please consider starring ⭐ it on GitHub — it helps us grow and support development!
+
 ## Requirements
 
 * CleanTalk account https://cleantalk.org/register?product=anti-spam
